@@ -1,0 +1,381 @@
+package KUMAR;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class conn {
+	public static Connection con;
+	conn() throws ClassNotFoundException,SQLException
+	{
+		Class.forName("com.mysql.cj.jdbc.Driver");
+		String url="jdbc:mysql://localhost:3306/project";
+		String user="root";
+		String pass="";
+		con=DriverManager.getConnection(url, user, pass);
+	}
+
+}
+
+
+
+package KUMAR;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class insert extends conn {
+	insert() throws ClassNotFoundException,SQLException
+	{
+		super();
+	}
+	public void insert(int regno,String dateofbirth,int tamil,int english,int maths,int science,int social,int total) throws SQLException
+	{
+		String q="insert into students values(?,?,?,?,?,?,?,?)";
+		PreparedStatement ps=con.prepareStatement(q);
+		ps.setInt(1,regno);
+		ps.setString(2,dateofbirth);
+		ps.setInt(3,tamil);
+		ps.setInt(4,english);
+		ps.setInt(5,maths);
+		ps.setInt(6,science);
+		ps.setInt(7,social);
+		ps.setInt(8,total);
+		int res=0;
+		res=ps.executeUpdate();
+		if(res!=0)
+		{
+			System.out.println("inserted");
+		}else
+		{
+			System.out.println("not inserted");
+		}
+		con.close();
+	}
+}
+
+
+
+package KUMAR;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class view extends conn {
+	view() throws ClassNotFoundException,SQLException
+	{
+		super();
+	}
+	public void view() throws SQLException
+	{
+		String q2="select * from students";
+		Statement s=con.createStatement();
+		ResultSet rs=s.executeQuery(q2);
+		while(rs.next())
+		{
+			System.out.println(rs.getInt("regno")+"\t"+rs.getString("dateofbirth")+"\t"+rs.getInt("tamil")+"\t"+rs.getInt("english")+"\t"+rs.getInt("maths")+"\t"+rs.getInt("science")+"\t"+rs.getInt("social")+"\t"+rs.getInt("total"));;
+		}
+		con.close();
+	}
+
+}
+
+
+
+package KUMAR;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class update extends conn {
+	update() throws ClassNotFoundException,SQLException
+	{
+		super();
+	}
+	public void update(String dateofbirth,int tamil,int english,int maths,int science,int social,int total,int regno) throws SQLException
+	{
+		String q3="update students set dateofbirth=?,tamil=?,english=?,maths=?,science=?,social=?,total=? where regno=?";
+		PreparedStatement ps1=con.prepareStatement(q3);
+		ps1.setInt(8,regno);
+		ps1.setString(1,dateofbirth);
+		ps1.setInt(2,tamil);
+		ps1.setInt(3,english);
+		ps1.setInt(4,maths);
+		ps1.setInt(5,science);
+		ps1.setInt(6,social);
+		ps1.setInt(7,total);
+		int res=0;
+		res=ps1.executeUpdate();
+		if(res!=0)
+		{
+			System.out.println("updated");
+		}else
+		{
+			System.out.println("not updated");
+		}
+		con.close();
+	}
+
+}
+
+
+
+package KUMAR;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+
+public class delete extends conn {
+	delete() throws ClassNotFoundException,SQLException
+	{
+		super();
+	}
+	public void delete(int regno)throws SQLException
+	{
+		String q4="delete from students where regno=?";
+		PreparedStatement ps2=con.prepareStatement(q4);
+		ps2.setInt(1,regno);
+		int res=0;
+		res=ps2.executeUpdate();
+		if(res!=0)
+		{
+			System.out.println("deleted");
+		}else
+		{
+			System.out.println("not deleted");
+		}
+		con.close();
+	}
+
+
+}
+
+
+
+package KUMAR;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class viewstudents extends conn {
+	viewstudents() throws ClassNotFoundException,SQLException
+	{
+		super();
+	}
+	public void viewstudents(int regno) throws SQLException
+	{
+		String q="select * from students where regno=?";
+		PreparedStatement ps=con.prepareStatement(q);
+		ps.setInt(1,regno);
+		ResultSet rs=ps.executeQuery();
+		rs.next();
+		System.out.println("REGISTER NUMER :"+rs.getInt("regno"));
+		System.out.println("DATE OF BIRTH :"+rs.getString("dateofbirth"));
+		System.out.println("TAMIL MARK :"+rs.getInt("tamil"));
+		System.out.println("ENGLISH MARK :"+rs.getInt("english"));
+		System.out.println("MATHS MARK :"+rs.getInt("maths"));
+		System.out.println("SCIENCE MARK :"+rs.getInt("science"));
+		System.out.println("SOCIAL MARK :"+rs.getInt("social"));
+		System.out.println("TOTAL  :"+rs.getInt("total"));
+		con.close();
+	}
+
+}
+
+
+
+
+
+package KUMAR;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class MUTHISH {
+
+	public static void main(String[] args) {
+		Scanner sc=new Scanner(System.in);
+		Connection con=null;
+		while(true) {
+		try
+		{
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			String url="jdbc:mysql://localhost:3306/project";
+			String user="root";
+			String pass="";
+			con=DriverManager.getConnection(url, user, pass);
+			System.out.println("1.government, 2.students");
+			int n=sc.nextInt();
+			if(n==1)
+			{
+				System.out.println("enter a regno");
+				int regno=sc.nextInt();
+				System.out.println("enter a date of birth(yyyy-mm-dd)");
+				String dateofbirth=sc.next();
+				String q="select dateofbirth from students where regno=?";
+				PreparedStatement ps=con.prepareStatement(q);
+				ps.setInt(1,regno);
+				ResultSet rs=ps.executeQuery();
+				rs.next();
+				if(dateofbirth.equals(rs.getString("dateofbirth")))
+				{
+					System.out.println("login success");
+				}else
+				{
+					System.out.println("login failed");
+					System.out.println("forget your password 1.yes /2.no");
+					int b=sc.nextInt();
+					if(b==1)
+					{
+						System.out.println("enter a regno");
+						int regno2=sc.nextInt();
+						System.out.println("enter a new date of birth(yyyy-mm-dd)");
+						String dateofbirth2=sc.next();
+						String q1="update students set dateofbirth=? where regno=?";
+						PreparedStatement ps1=con.prepareStatement(q1);
+						ps1.setString(1,dateofbirth2);
+						ps1.setInt(2,regno2);
+						int res=0;
+						res=ps1.executeUpdate();
+						if(res!=0)
+						{
+							System.out.println("password changed");
+							main(args);
+						}else
+						{
+							System.out.println("not password changed");
+							main(args);
+						}
+						}else if(b==2)
+						{
+							System.out.println("enter a regno");
+							int regno2=sc.nextInt();
+							System.out.println("enter a date of birth(yyyy-mm-dd)");
+							String dateofbirth2=sc.next();
+							String q2="select dateofbirth from students where regno=?";
+							PreparedStatement ps2=con.prepareStatement(q2);
+							ps2.setInt(1,regno2);
+							ResultSet rs1=ps2.executeQuery();
+							rs1.next();
+							if(dateofbirth2.equals(rs1.getString("dateofbirth")))
+							{
+								System.out.println("login success");
+							}else
+							{
+								System.out.println("invalid option");
+								main(args);
+							}
+						}
+				}
+				
+				System.out.println("1.insert");
+				System.out.println("2.view");
+				System.out.println("3.update");
+				System.out.println("4.delete");
+				System.out.println("5.exit");
+				int m=sc.nextInt();
+				if(m==1)
+				{
+					System.out.println("enter a regno");
+					int regno2=sc.nextInt();
+					System.out.println("enter a date of birth(yyyy-mm-dd)");
+					String dateofbirth2=sc.next();
+					System.out.println("enter a tamil mark");
+					int tamil2=sc.nextInt();
+					System.out.println("enter a english mark");
+					int english2=sc.nextInt();
+					System.out.println("enter a maths mark");
+					int maths2=sc.nextInt();
+					System.out.println("enter a science mark");
+					int science2=sc.nextInt();
+					System.out.println("enter a social mark");
+					int social2=sc.nextInt();
+					int total2=(tamil2+english2+maths2+science2+social2);
+					insert i2=new insert();
+					i2.insert(regno2, dateofbirth2, tamil2, english2, maths2, science2, social2, total2);
+				}
+				else if(m==2)
+				{
+					view v=new view();
+					v.view();
+				}
+				else if(m==3)
+				{
+					System.out.println("enter a regno");
+					int regno2=sc.nextInt();
+					System.out.println("enter a date of birth(yyyy-mm-dd)");
+					String dateofbirth2=sc.next();
+					System.out.println("enter a tamil mark");
+					int tamil2=sc.nextInt();
+					System.out.println("enter a english mark");
+					int english2=sc.nextInt();
+					System.out.println("enter a maths mark");
+					int maths2=sc.nextInt();
+					System.out.println("enter a science mark");
+					int science2=sc.nextInt();
+					System.out.println("enter a social mark");
+					int social2=sc.nextInt();
+					int total2=(tamil2+english2+maths2+science2+social2);
+					update u=new update();
+					u.update(dateofbirth2, tamil2, english2, maths2, science2, social2, total2, regno2);
+				}
+				else if(m==4)
+				{
+					System.out.println("enter a regno");
+					int regno2=sc.nextInt();
+					delete d=new delete();
+					d.delete(regno2);
+				}
+				else if(m==5)
+				{
+					System.out.println("welcome");
+					break;
+				}
+				else
+				{
+					System.out.println("invalid option");
+				}
+				
+			}else if(n==2)
+			{
+				System.out.println("enter a regno");
+				int regno=sc.nextInt();
+				System.out.println("enter a date of birth(yyyy-mm-dd)");
+				String dateofbirth=sc.next();
+				String q="select dateofbirth from students where regno=?";
+				PreparedStatement ps=con.prepareStatement(q);
+				ps.setInt(1,regno);
+				ResultSet rs=ps.executeQuery();
+				rs.next();
+				if(dateofbirth.equals(rs.getString("dateofbirth")))
+				{
+					System.out.println("login success");
+				}else
+				{
+					System.out.println("login failed");
+				}
+				viewstudents vs=new viewstudents();
+				vs.viewstudents(regno);
+				break;
+			}
+			else
+			{
+				System.out.println("invalid option");
+			}
+			con.close();
+		}
+		catch(ClassNotFoundException | SQLException e)
+		{
+			System.out.println("invalid");
+		}
+	}
+		sc.close();
+  }
+}
+
